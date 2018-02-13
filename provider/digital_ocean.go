@@ -19,6 +19,7 @@ package provider
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/oauth2"
@@ -105,7 +106,7 @@ func (p *DigitalOceanProvider) Records() ([]*endpoint.Endpoint, error) {
 
 		for _, r := range records {
 			if supportedRecordType(r.Type) {
-				endpoints = append(endpoints, endpoint.NewEndpoint(r.Name, r.Data, r.Type))
+				endpoints = append(endpoints, endpoint.NewEndpoint(r.Name+"."+zone.Name, r.Data, r.Type))
 			}
 		}
 	}
@@ -184,6 +185,7 @@ func (p *DigitalOceanProvider) submitChanges(changes []*DigitalOceanChange) erro
 			continue
 		}
 		for _, change := range changes {
+			change.ResourceRecordSet.Name = strings.TrimSuffix(change.ResourceRecordSet.Name, "."+zoneName)
 			logFields := log.Fields{
 				"record": change.ResourceRecordSet.Name,
 				"type":   change.ResourceRecordSet.Type,
