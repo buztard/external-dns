@@ -186,6 +186,11 @@ func (p *DigitalOceanProvider) submitChanges(changes []*DigitalOceanChange) erro
 		}
 		for _, change := range changes {
 			change.ResourceRecordSet.Name = strings.TrimSuffix(change.ResourceRecordSet.Name, "."+zoneName)
+			// CNAME records need a trailing dot.
+			// 422 Data needs to end with a dot (.)
+			if change.ResourceRecordSet.Type == endpoint.RecordTypeCNAME {
+				change.ResourceRecordSet.Data += "."
+			}
 			logFields := log.Fields{
 				"record": change.ResourceRecordSet.Name,
 				"type":   change.ResourceRecordSet.Type,
