@@ -189,6 +189,7 @@ func (p *DigitalOceanProvider) submitChanges(changes []*DigitalOceanChange) erro
 				"type":   change.ResourceRecordSet.Type,
 				"action": change.Action,
 				"zone":   zoneName,
+				"data":   change.ResourceRecordSet.Data,
 			}
 
 			log.WithFields(logFields).Info("Changing record.")
